@@ -1,0 +1,87 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: registry
+  namespace: default
+  labels:
+    app: registry
+spec:
+  selector:
+    app: registry
+  ports:
+  - name: registry
+    port: 5000
+    protocol: TCP
+  type: LoadBalancer
+
+---
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: registry
+  namespace: default
+  labels:
+    app: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+
+    spec:
+      containers:
+      - name: registry
+        image: registry:latest
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+
+        ports:
+        - containerPort: 5000
+          name: registry
+          protocol: TCP
+
+        env:
+        - name: REGISTRY_HTTP_ADDR
+          value: :5000
+        - name: REGISTRY_HTTP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: registry
+              key: http-secret
+        - name: REGISTRY_HTTP_TLS_CERTIFICATE
+          value: /config/registry.crt
+        - name: REGISTRY_HTTP_TLS_KEY
+          value: /config/registry.key
+        - name: REGISTRY_STORAGE_DELETE_ENABLED
+          value: "true"
+        - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+          value: /var/lib/registry
+
+        volumeMounts:
+        - name: registry
+          mountPath: /var/lib/registry
+        - name: config
+          mountPath: /config
+
+      volumes:
+      - name: registry
+        persistentVolumeClaim:
+          claimName: tmp
+      - name: config
+        secret:
+          secretName: registry
+
+# - name: REGISTRY_AUTH
+#   value: htpasswd
+# - name: REGISTRY_AUTH_HTPASSWD_REALM
+#   value: Registry
+# - name: REGISTRY_AUTH_HTPASSWD_PATH
+#   value: /config/htpasswd

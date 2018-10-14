@@ -1,0 +1,36 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: test
+  labels:
+    app: test
+spec:
+  restartPolicy: Never
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - docker-for-desktop
+  # securityContext:
+  #   sysctls:
+  #   - name: net.core.somaxconn
+  #     value: "1024"
+  # imagePullSecrets:
+  # - name: index.docker.io
+  containers:
+  - name: test
+    # imagePullPolicy: Always
+    image: registry:5000/test:latest
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+    command: ["go"]
+    args: ["test", "-v"]
+    # securityContext:
+    #   allowPrivilegeEscalation: true

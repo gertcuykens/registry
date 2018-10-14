@@ -1,0 +1,50 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: registry-gc
+  labels:
+    app: registry-gc
+spec:
+  restartPolicy: Never
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - docker-for-desktop
+  # securityContext:
+  #   sysctls:
+  #   - name: net.core.somaxconn
+  #     value: "1024"
+  # imagePullSecrets:
+  # - name: index.docker.io
+  containers:
+  - name: registry
+    # imagePullPolicy: Always
+    image: registry:latest
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+    command: ["/entrypoint.sh"]
+    args: ["garbage-collect", "/config/registry.yml"]
+    # securityContext:
+    #   allowPrivilegeEscalation: true
+
+    volumeMounts:
+    - name: registry
+      mountPath: /var/lib/registry
+    - name: config
+      mountPath: /config
+
+  volumes:
+  - name: registry
+    persistentVolumeClaim:
+      claimName: tmp
+  - name: config
+    configMap:
+      name: registry
