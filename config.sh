@@ -20,7 +20,7 @@ kubectl create configmap registry --from-file=config/registry.yml
 # cat domain.crt intermediate-certificates.pem > certs/domain.crt
 
 # kubectl create secret docker-registry index.docker.io \
-#   --docker-server=https://index.docker.io/v1/ \
+#   --docker-server=https://index.docker.io/v2/ \
 #   --docker-username=... \
 #   --docker-password=... \
 #   --docker-email=...
