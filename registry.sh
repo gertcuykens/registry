@@ -26,3 +26,6 @@ docker run -it --rm \
 # /etc/hosts
 # 127.0.0.1 localhost nats registry
 # ::1       localhost nats registry
+
+# https://docs.docker.com/registry/configuration/
+# https://docs.docker.com/engine/swarm/stack-deploy/
