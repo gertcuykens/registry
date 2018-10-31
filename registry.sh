@@ -5,7 +5,7 @@ docker run -it --rm \
   -v `pwd`/config:/config \
   -v /tmp:/var/lib/registry \
   -e REGISTRY_HTTP_ADDR=:5000 \
-  -e REGISTRY_HTTP_SECRET=admin \
+  -e REGISTRY_HTTP_SECRET=seed \
   -e REGISTRY_HTTP_TLS_CERTIFICATE=/config/registry.crt \
   -e REGISTRY_HTTP_TLS_KEY=/config/registry.key \
   -e REGISTRY_STORAGE_DELETE_ENABLED=true \
