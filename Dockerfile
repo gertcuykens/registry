@@ -1,6 +1,6 @@
 FROM golang:alpine as root
 # ARG TOKEN
-WORKDIR /go/src/github.com/gertcuykens/registry
+WORKDIR /go/src
 RUN apk add --no-cache ca-certificates musl-dev gcc file git vim curl \
     && apk update \
     && apk upgrade \
